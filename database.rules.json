@@ -1,0 +1,60 @@
+{
+    "rules": {
+      ".read": "auth != 'admin'",
+      ".write": "auth != 'admin'",
+        "users" : {
+          "$uid" : {
+            ".read": "$uid === auth.uid",
+            ".write": "$uid === auth.uid",
+            "name": {".validate": "newData.isString()"},
+            "surname": {".validate": "newData.isString()"},
+            "email": {".validate": "newData.isString()"},
+            "mobile": {".validate": "newData.isString()"},
+            "prefered_location": {".validate": "newData.isString()"},
+            "picture_url": {".validate": "newData.isString()"},
+            "trips": {
+                "$trip_id":{".validate":"root.child('trips').child($trip_id).exists()"}
+            },
+            "trip_patterns": {
+              "$trip_pattern_id":{".validate": "root.child('trip_patterns').child($trip_pattern_id).exists()"}
+            }
+          }
+        },
+        "trips":{
+          "$trip_id":{
+            ".read":"data.child('uid').val() === auth.uid",
+            ".write":"data.child('uid').val() === auth.uid",
+            "uid":{".validate":"root.child('users').child(newData.val()).exists()"},
+            "date":{".validate" : "newData.isNumber()"},
+            "visible":{".validate":"newData.isBoolean()"},
+            "to_company":{".validate":"newData.isBoolean()"},
+            "capacity":{".validate":"newData.isNumber()"},
+            "participants":{
+              "$uid": {
+                ".validate":"root.child('users').child(newData.val()).exists()"
+              }
+            },
+            "time":{".validate":"newData.isNumber()"},
+            "location":{
+              "latitude":{".validate":"newData.isNumber()"},
+              "longitude":{".validate":"newData.isNumber()"}
+            }
+          } 
+        },
+        "trip_patterns":{
+          "$trip_pattern_id":{
+            ".read":"data.child('uid').val() === auth.uid",
+            ".write":"data.child('uid').val() === auth.uid",
+            "uid":{".validate":"root.child('users').child(newData.val()).exists()"},
+            "day":{".validate":"newData.isNumber() && newData.val() >= 1 && newData.val() <= 7"},
+              "to_company":{".validate":"newData.isBoolean()"},
+            "capacity":{".validate":"newData.isNumber()"},
+            "time":{".validate":"newData.isNumber()"},
+            "location":{
+              "latitude":{".validate":"newData.isNumber()"},
+              "longitude":{".validate":"newData.isNumber()"}
+            }
+          }
+        }
+    }
+  }
